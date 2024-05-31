@@ -4,9 +4,9 @@ def greet(name, intensity):
     return "Hello, " + name + "!" * int(intensity)
 
 demo = gr.Interface(
-    fn=greet,
-    inputs=["text", "slider"],
-    outputs=["text"],
+  fn=greet,
+  inputs="textbox",
+  outputs="textbox"
 )
 
-demo.launch()
+demo.launch(share=True) # 데모용 URL 생성
