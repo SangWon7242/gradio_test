@@ -77,3 +77,34 @@ demo = gr.ChatInterface(
 if __name__ == "__main__":
     demo.launch()
 ```
+
+# 랭체인을 사용하기 위해 설치 모듈
+
+```
+pip install langchain openai
+pip install langchain_community
+pip install -U langchain-community
+```
+
+# 챗봇을 위한 준비 코드
+
+```py
+from langchain_community.chat_models import ChatOpenAI
+from langchain.schema import AIMessage, HumanMessage
+import openai
+import gradio as gr
+import os
+
+os.environ["OPENAI_API_KEY"] = "sk-..."  # Replace with your key
+
+llm = ChatOpenAI(temperature=1.0, model='gpt-3.5-turbo-0613')
+
+def response(message, history):
+    history_langchain_format = []
+    for human, ai in history:
+        history_langchain_format.append(HumanMessage(content=human))
+        history_langchain_format.append(AIMessage(content=ai))
+    history_langchain_format.append(HumanMessage(content=message))
+    gpt_response = llm(history_langchain_format)
+    return gpt_response.content
+```

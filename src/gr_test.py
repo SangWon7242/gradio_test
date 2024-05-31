@@ -1,13 +1,26 @@
+from langchain_community.chat_models import ChatOpenAI
+from langchain.schema import AIMessage, HumanMessage
 import gradio as gr
+from dotenv import load_dotenv
+import os
 
-def yes_man(message, history):
-    if message.endswith("?"):
-        return "Yes"
-    else:
-        return "Ask me anything!"
+load_dotenv()
+
+os.environ["OPENAI_API_KEY"] = os.getenv("PUBLIC_SERVICE_KEY")  # Replace with your key
+
+llm = ChatOpenAI(temperature=1.0, model='gpt-3.5-turbo-0613')
+
+def response(message, history):
+    history_langchain_format = []
+    for human, ai in history:
+        history_langchain_format.append(HumanMessage(content=human))
+        history_langchain_format.append(AIMessage(content=ai))
+    history_langchain_format.append(HumanMessage(content=message))
+    gpt_response = llm(history_langchain_format)
+    return gpt_response.content
 
 demo = gr.ChatInterface(
-    yes_man,
+    fn=response,
     chatbot=gr.Chatbot(height=300),
     textbox=gr.Textbox(placeholder="Ask me a yes or no question", container=False, scale=7),
     title="Yes Man",
